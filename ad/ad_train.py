@@ -86,7 +86,7 @@ def train():
     for ue in df.UEID.unique():
         seg[str(ue)] = list(set(y[df[df['UEID'] == ue].index]))
 
-    with open('ue_seg.json', 'w') as outfile:
+    with open('ad/ue_seg.json', 'w') as outfile:
         json.dump(seg, outfile)
 
     # Do a preprocessing, processing and save the model
