@@ -30,32 +30,17 @@ def test_RFtrainmodel(monkeypatch):
 
 
 def test_predict_anomaly(monkeypatch):
-    # The read_csv logic will be modified when we are going to fetch the data from database via sdl api.
-    # Read the input csv file
-    ue_data = pd.read_csv('ad/ue_test.csv')
-
-    # Parse the ue data and predict the anomaly records for the randomly selected UEID
-    data = parse(ue_data)
-    db_df = HDB_PREDICT(data)
-    db_df = db_df.loc[db_df['Anomaly'] == 1][['UEID', 'MeasTimestampRF']].head(1)
-    db_df['MeasTimestampRF'] = db_df['MeasTimestampRF'].apply(lambda x: str(x))  # converts into string format
-
-    # rmr send 30003(TS_ANOMALY_UPDATE), should trigger registered callback
-    result = json.loads(db_df.to_json(orient='records'))
-    val = json.dumps(result).encode()
-
-    if len(val) > 2:
-        assert val[3:7] == b'UEID'
-        assert val[18:33] == b'MeasTimestampRF'
+    main.predict_anomaly('test')
 
 
 def test_msg_to_ts(monkeypatch, ad_to_ts):
-
+    
     def mock_ad_entry(self):
-        global val, mock_ad_xapp
-        val = ad_to_ts
-        mock_ad_xapp = Xapp(entrypoint=main.msg_to_ts(self, val), rmr_port=4564, use_fake_sdl=True)
-        mock_ad_xapp.run()  # this will return since mock_ad_entry isn't a loop
+        val = json.dumps(ad_to_ts).encode()
+        self.rmr_send(val, 30003)
+    global mock_ad_xapp
+    mock_ad_xapp = Xapp(entrypoint=mock_ad_entry, rmr_port=4564, use_fake_sdl=True)
+    mock_ad_xapp.run()  # this will return since mock_ad_entry isn't a loop  # this will return since mock_ad_entry isn't a loop
 
 
 def teardown_module():
