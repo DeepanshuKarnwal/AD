@@ -18,9 +18,6 @@ from ricxappframe.xapp_frame import Xapp
 from contextlib import suppress
 import os
 from ad.ad_train import train
-import pandas as pd
-from ad.ad_model.tb_format import parse
-from ad.ad_model.ad_model import HDB_PREDICT
 import json
 
 
