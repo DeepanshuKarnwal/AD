@@ -31,7 +31,7 @@ def test_predict_anomaly(monkeypatch):
 
 
 def test_msg_to_ts(monkeypatch, ad_to_ts):
-    
+
     def mock_ad_entry(self):
         val = json.dumps(ad_to_ts).encode()
         self.rmr_send(val, 30003)
